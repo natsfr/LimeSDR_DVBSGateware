@@ -180,7 +180,9 @@ begin
       --fifo ports
       fifo_rdreq           => tx_in_pct_rdreq,
       fifo_data            => tx_in_pct_data,
-      fifo_rdempty         => tx_in_pct_rdempty
+      fifo_rdempty         => tx_in_pct_rdempty,
+		
+		from_fpgacfg			=> from_fpgacfg
       );
             
 -- ----------------------------------------------------------------------------

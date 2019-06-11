@@ -9,6 +9,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.general_pkg.all;
+use work.fpgacfg_pkg.all;
 
 -- ----------------------------------------------------------------------------
 -- Entity declaration
@@ -60,7 +61,10 @@ entity tx_path_top is
       --FIFO ports
       fifo_rdreq           : out std_logic;
       fifo_data            : in std_logic_vector(g_FIFO_DATA_W-1 downto 0);
-      fifo_rdempty         : in std_logic
+      fifo_rdempty         : in std_logic;
+		
+		-- adding fpga config for DVBS
+		from_fpgacfg         : in     t_FROM_FPGACFG
       );
 end tx_path_top;
 
@@ -390,8 +394,8 @@ diq2fifo_inst2 : entity work.fifo2diq
       DIQ_l                => DIQ_l,
       fifo_rdempty         => inst1_smpl_buff_rdempty,
       fifo_rdreq           => inst2_fifo_rdreq,
-      fifo_q               => inst2_fifo_q 
-   
+      fifo_q               => inst2_fifo_q, 
+		from_fpgacfg			=> from_fpgacfg
       );
 end arch;   
 

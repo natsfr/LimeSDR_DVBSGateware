@@ -42,6 +42,12 @@ package fpgacfg_pkg is
       rx_ptrn_en     : std_logic;
       tx_ptrn_en     : std_logic;
       tx_cnt_en      : std_logic;
+
+      -- Adding new signal for DVBS mode
+      -- Using register 11 totally free
+      dvbs_upsample	 : std_logic_vector(2 downto 0);
+      dvbs_psk		 : std_logic_vector(1 downto 0);
+
       wfm_ch_en      : std_logic_vector(15 downto 0);
       wfm_play       : std_logic;
       wfm_load       : std_logic;

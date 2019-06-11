@@ -287,6 +287,10 @@ begin
       from_fpgacfg.rx_ptrn_en          <= mem(10) (8);
       from_fpgacfg.tx_ptrn_en          <= mem(10) (9);
       from_fpgacfg.tx_cnt_en           <= mem(10) (10);
+		
+	  -- Adding register reference for DVBS mode
+	  from_fpgacfg.dvbs_upsample		<= mem(11) (2 downto 0);
+	  from_fpgacfg.dvbs_psk   			<= mem(11) (4 downto 3);
       
       from_fpgacfg.wfm_ch_en           <= mem(12) (15 downto 0);
       from_fpgacfg.wfm_play            <= mem(13) (1);
