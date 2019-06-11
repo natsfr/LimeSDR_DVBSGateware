@@ -8,6 +8,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.fpgacfg_pkg.all;
 
 -- ----------------------------------------------------------------------------
 -- Entity declaration
@@ -43,8 +44,10 @@ entity fifo2diq is
       --fifo ports 
       fifo_rdempty         : in std_logic;
       fifo_rdreq           : out std_logic;
-      fifo_q               : in std_logic_vector(iq_width*4-1 downto 0) 
-
+      fifo_q               : in std_logic_vector(iq_width*4-1 downto 0);
+		
+		-- adding fpga config for DVBS
+		from_fpgacfg         : in     t_FROM_FPGACFG
         );
 end fifo2diq;
 
@@ -110,7 +113,7 @@ inst0_lms7002_dout : entity work.lms7002_ddout
       );
         
         
- inst1_txiq : entity work.txiq
+ inst1_txiq : entity work.txiq_dvbs
    generic map( 
       dev_family     => dev_family,
       iq_width       => iq_width
@@ -129,7 +132,8 @@ inst0_lms7002_dout : entity work.lms7002_ddout
       fifo_rdempty   => fifo_rdempty,
       fifo_rdreq     => inst1_fifo_rdreq,
       fifo_q         => fifo_q,
-      txant_en       => inst1_txant_en
+      txant_en       => inst1_txant_en,
+		from_fpgacfg	=> from_fpgacfg
         );
         
 txiq_ctrl_inst3 : entity work.txiq_ctrl
