@@ -557,16 +557,16 @@ begin
 --   FPGA_GPIO         <= inst4_gpio(7 downto 0);
 --   FPGA_EGPIO        <= inst4_gpio(9 downto 8);
    
-   
-   
-   
+
+
+
    RFSW_RX_V1        <= inst0_from_fpgacfg.GPIO(8);
    RFSW_RX_V2        <= inst0_from_fpgacfg.GPIO(9);
    RFSW_TX_V1        <= inst0_from_fpgacfg.GPIO(12);
    RFSW_TX_V2        <= inst0_from_fpgacfg.GPIO(13);
    TX_LB_AT          <= inst0_from_fpgacfg.GPIO(1);
    TX_LB_SH          <= inst0_from_fpgacfg.GPIO(2);
-   
+
 
 
 end arch;   
