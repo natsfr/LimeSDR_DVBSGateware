@@ -71,9 +71,14 @@ signal cnt_data				: integer range 0 to 24;
 signal cnt_sym					: integer range 0 to 3;
 signal up_factor				: integer range 1 to 4;
 
+signal pskmod					: std_logic_vector(1 downto 0);
+
 begin
 
-rd_wait_cnt_max <= to_unsigned(24 * up_factor, 16);
+-- For QPSK mode the 48 bit pack 24 symbols, for 8 PSK it's 16 symbols
+with pskmod select
+	rd_wait_cnt_max <= to_unsigned(16 * up_factor, 16) when "01",
+							 to_unsigned(24 * up_factor, 16) when others;
                      
 fifo_rdreq <= int_fifo_rdreq AND NOT fifo_rdempty;
 
@@ -83,7 +88,9 @@ qpsk_shifter_inst : work.QPSK_Shifter
       cnt_in => to_unsigned(cnt_data, 7),
       
       i_out => sig_i,
-      q_out => sig_q
+      q_out => sig_q,
+		
+		pskmod => pskmod
    );
 
 fsm_sync: process(clk, reset_n) begin
@@ -112,6 +119,7 @@ fsm_sync: process(clk, reset_n) begin
             diq_L_reg_0 <= "1" & (iq_width-1 downto 0  =>'0');
             txant_en <= '0';
 				up_factor <= to_integer(unsigned(from_fpgacfg.dvbs_upsample));
+				pskmod <= from_fpgacfg.dvbs_psk;
 
          when rd_samples =>
             rd_wait_cnt <= rd_wait_cnt + 1;
