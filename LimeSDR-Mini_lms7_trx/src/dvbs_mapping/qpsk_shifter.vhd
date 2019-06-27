@@ -17,27 +17,95 @@ port (
 	cnt_in: in unsigned(6 downto 0);
 
 	i_out: out std_logic_vector(11 downto 0);
-	q_out: out std_logic_vector(11 downto 0)
+	q_out: out std_logic_vector(11 downto 0);
+	
+	pskmod: in std_logic_vector(1 downto 0)
 	);
 end QPSK_Shifter;
 
 architecture arch of QPSK_Shifter is
 	signal shifted_sym: std_logic_vector(47 downto 0);
-	alias sym_current: std_logic_vector(1 downto 0) is shifted_sym(1 downto 0);
+	alias qpsk_sym_current: std_logic_vector(1 downto 0) is shifted_sym(1 downto 0);
+	alias psk8_sym_current: std_logic_vector(2 downto 0) is shifted_sym(2 downto 0);
+	
+	signal shift_index: integer range 1 to 3;
 begin
 
-	shifted_sym <= std_logic_vector(shift_right(unsigned(sym_in), to_integer(cnt_in*2)));
+	with pskmod select
+		shift_index <= 3 when "01",
+							2 when others;
 
-	with sym_current select
-		i_out <= std_logic_vector(to_signed(1447, 12)) when "00",
-			     std_logic_vector(to_signed(1447, 12)) when "01",
-			     std_logic_vector(to_signed(-1447, 12)) when "10",
-			     std_logic_vector(to_signed(-1447, 12)) when "11";
+	shifted_sym <= std_logic_vector(shift_right(unsigned(sym_in), to_integer(cnt_in*shift_index)));
 
-	with sym_current select
-		q_out <= std_logic_vector(to_signed(1447, 12)) when "00",
-			     std_logic_vector(to_signed(-1447, 12)) when "01",
-			     std_logic_vector(to_signed(1447, 12)) when "10",
-			     std_logic_vector(to_signed(-1447, 12)) when "11";
+--	with sym_current select
+--		i_out <= std_logic_vector(to_signed(1447, 12)) when "00",
+--			     std_logic_vector(to_signed(1447, 12)) when "01",
+--			     std_logic_vector(to_signed(-1447, 12)) when "10",
+--			     std_logic_vector(to_signed(-1447, 12)) when "11";
+--
+--	with sym_current select
+--		q_out <= std_logic_vector(to_signed(1447, 12)) when "00",
+--			     std_logic_vector(to_signed(-1447, 12)) when "01",
+--			     std_logic_vector(to_signed(1447, 12)) when "10",
+--			     std_logic_vector(to_signed(-1447, 12)) when "11";
+				  
+	process (psk8_sym_current, qpsk_sym_current, pskmod) is
+	begin
+		if pskmod = "01" then -- 8PSK
+			case psk8_sym_current is
+				when "000" =>
+					i_out <= std_logic_vector(to_signed(1447, 12));
+					q_out <= std_logic_vector(to_signed(1447, 12));
+					
+				when "001" =>
+					i_out <= std_logic_vector(to_signed(2047, 12));
+					q_out <= std_logic_vector(to_signed(0, 12));
+					
+				when "010" =>
+					i_out <= std_logic_vector(to_signed(-2047, 12));
+					q_out <= std_logic_vector(to_signed(0, 12));
+					
+				when "011" =>
+					i_out <= std_logic_vector(to_signed(-1447, 12));
+					q_out <= std_logic_vector(to_signed(-1447, 12));
+					
+				when "100" =>
+					i_out <= std_logic_vector(to_signed(0, 12));
+					q_out <= std_logic_vector(to_signed(2047, 12));
+					
+				when "101" =>
+					i_out <= std_logic_vector(to_signed(1447, 12));
+					q_out <= std_logic_vector(to_signed(-1447, 12));
+					
+				when "110" =>
+					i_out <= std_logic_vector(to_signed(-1447, 12));
+					q_out <= std_logic_vector(to_signed(1447, 12));
+					
+				when "111" =>
+					i_out <= std_logic_vector(to_signed(0, 12));
+					q_out <= std_logic_vector(to_signed(-2047, 12));
+					
+			end case;
+		else -- QPSK
+			case qpsk_sym_current is
+				when "00" =>
+					i_out <= std_logic_vector(to_signed(1447, 12));
+					q_out <= std_logic_vector(to_signed(1447, 12));
+					
+				when "01" =>
+					i_out <= std_logic_vector(to_signed(1447, 12));
+					q_out <= std_logic_vector(to_signed(-1447, 12));
+					
+				when "10" =>
+					i_out <= std_logic_vector(to_signed(-1447, 12));
+					q_out <= std_logic_vector(to_signed(1447, 12));
+					
+				when "11" =>
+					i_out <= std_logic_vector(to_signed(-1447, 12));
+					q_out <= std_logic_vector(to_signed(-1447, 12));
+					
+			end case;
+		end if;
+	end process;
 
 end arch;
