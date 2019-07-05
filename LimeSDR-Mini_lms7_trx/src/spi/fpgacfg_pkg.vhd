@@ -47,6 +47,7 @@ package fpgacfg_pkg is
       -- Using register 11 totally free
       dvbs_upsample	 : std_logic_vector(2 downto 0);
       dvbs_psk		 : std_logic_vector(1 downto 0);
+      dvbs_gain          : std_logic_vector(4 downto 0);
 
       wfm_ch_en      : std_logic_vector(15 downto 0);
       wfm_play       : std_logic;

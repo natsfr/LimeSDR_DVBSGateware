@@ -71,7 +71,13 @@ signal cnt_data				: integer range 0 to 24;
 signal cnt_sym					: integer range 0 to 3;
 signal up_factor				: integer range 1 to 4;
 
+-- As defined max(sym_pi4) = 1440 and max(sym_pi2) = 2016
+signal sym_pi4					: unsigned(11 downto 0);
+signal sym_pi2					: unsigned(11 downto 0);
+signal gain						: std_logic_vector(5 downto 0);
+
 signal pskmod					: std_logic_vector(1 downto 0);
+
 
 begin
 
@@ -90,10 +96,13 @@ qpsk_shifter_inst : work.QPSK_Shifter
       i_out => sig_i,
       q_out => sig_q,
 		
-		pskmod => pskmod
+		pskmod => pskmod,
+		sym_pi4 => signed(sym_pi4),
+		sym_pi2 => signed(sym_pi2)
    );
 
-fsm_sync: process(clk, reset_n) begin
+fsm_sync: process(clk, reset_n)
+begin
    if reset_n = '0' then
       current_state <= idle;
       rd_wait_cnt <= (others=>'0');
@@ -118,9 +127,14 @@ fsm_sync: process(clk, reset_n) begin
             diq_H_reg_0 <= "0" & (iq_width-1 downto 0  =>'0');
             diq_L_reg_0 <= "1" & (iq_width-1 downto 0  =>'0');
             txant_en <= '0';
+				
+				-- We fetch parameter from interactives register
 				up_factor <= to_integer(unsigned(from_fpgacfg.dvbs_upsample));
 				pskmod <= from_fpgacfg.dvbs_psk;
-
+				gain(5 downto 0) <= std_logic_vector(unsigned(B"0" & from_fpgacfg.dvbs_gain) + 1); 
+				sym_pi2 <= unsigned(gain) * to_unsigned(63, 6);
+				sym_pi4 <= unsigned(gain) * to_unsigned(45, 6);
+				
          when rd_samples =>
             rd_wait_cnt <= rd_wait_cnt + 1;
 				cnt_sym <= cnt_sym + 1;

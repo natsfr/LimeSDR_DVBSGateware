@@ -19,7 +19,9 @@ port (
 	i_out: out std_logic_vector(11 downto 0);
 	q_out: out std_logic_vector(11 downto 0);
 	
-	pskmod: in std_logic_vector(1 downto 0)
+	pskmod: in std_logic_vector(1 downto 0);
+	sym_pi4: in signed(11 downto 0);
+	sym_pi2: in signed(11 downto 0)
 	);
 end QPSK_Shifter;
 
@@ -36,73 +38,61 @@ begin
 							2 when others;
 
 	shifted_sym <= std_logic_vector(shift_right(unsigned(sym_in), to_integer(cnt_in*shift_index)));
-
---	with sym_current select
---		i_out <= std_logic_vector(to_signed(1447, 12)) when "00",
---			     std_logic_vector(to_signed(1447, 12)) when "01",
---			     std_logic_vector(to_signed(-1447, 12)) when "10",
---			     std_logic_vector(to_signed(-1447, 12)) when "11";
---
---	with sym_current select
---		q_out <= std_logic_vector(to_signed(1447, 12)) when "00",
---			     std_logic_vector(to_signed(-1447, 12)) when "01",
---			     std_logic_vector(to_signed(1447, 12)) when "10",
---			     std_logic_vector(to_signed(-1447, 12)) when "11";
 				  
 	process (psk8_sym_current, qpsk_sym_current, pskmod) is
 	begin
 		if pskmod = "01" then -- 8PSK
 			case psk8_sym_current is
 				when "000" =>
-					i_out <= std_logic_vector(to_signed(1447, 12));
-					q_out <= std_logic_vector(to_signed(1447, 12));
+					i_out <= std_logic_vector(sym_pi4);
+					q_out <= std_logic_vector(sym_pi4);
 					
 				when "001" =>
-					i_out <= std_logic_vector(to_signed(2047, 12));
+					i_out <= std_logic_vector(sym_pi2);
 					q_out <= std_logic_vector(to_signed(0, 12));
 					
 				when "010" =>
-					i_out <= std_logic_vector(to_signed(-2047, 12));
+					i_out <= std_logic_vector(-sym_pi2);
 					q_out <= std_logic_vector(to_signed(0, 12));
 					
 				when "011" =>
-					i_out <= std_logic_vector(to_signed(-1447, 12));
-					q_out <= std_logic_vector(to_signed(-1447, 12));
+					i_out <= std_logic_vector(-sym_pi4);
+					q_out <= std_logic_vector(-sym_pi4);
 					
 				when "100" =>
 					i_out <= std_logic_vector(to_signed(0, 12));
-					q_out <= std_logic_vector(to_signed(2047, 12));
+					q_out <= std_logic_vector(sym_pi2);
 					
 				when "101" =>
-					i_out <= std_logic_vector(to_signed(1447, 12));
-					q_out <= std_logic_vector(to_signed(-1447, 12));
+					i_out <= std_logic_vector(sym_pi4);
+					q_out <= std_logic_vector(-sym_pi4);
 					
 				when "110" =>
-					i_out <= std_logic_vector(to_signed(-1447, 12));
-					q_out <= std_logic_vector(to_signed(1447, 12));
+					i_out <= std_logic_vector(-sym_pi4);
+					q_out <= std_logic_vector(sym_pi4);
 					
 				when "111" =>
 					i_out <= std_logic_vector(to_signed(0, 12));
-					q_out <= std_logic_vector(to_signed(-2047, 12));
+					q_out <= std_logic_vector(-sym_pi2);
 					
 			end case;
 		else -- QPSK
 			case qpsk_sym_current is
 				when "00" =>
-					i_out <= std_logic_vector(to_signed(1447, 12));
-					q_out <= std_logic_vector(to_signed(1447, 12));
+					i_out <= std_logic_vector(sym_pi4);
+					q_out <= std_logic_vector(sym_pi4);
 					
 				when "01" =>
-					i_out <= std_logic_vector(to_signed(1447, 12));
-					q_out <= std_logic_vector(to_signed(-1447, 12));
+					i_out <= std_logic_vector(sym_pi4);
+					q_out <= std_logic_vector(-sym_pi4);
 					
 				when "10" =>
-					i_out <= std_logic_vector(to_signed(-1447, 12));
-					q_out <= std_logic_vector(to_signed(1447, 12));
+					i_out <= std_logic_vector(-sym_pi4);
+					q_out <= std_logic_vector(sym_pi4);
 					
 				when "11" =>
-					i_out <= std_logic_vector(to_signed(-1447, 12));
-					q_out <= std_logic_vector(to_signed(-1447, 12));
+					i_out <= std_logic_vector(-sym_pi4);
+					q_out <= std_logic_vector(-sym_pi4);
 					
 			end case;
 		end if;

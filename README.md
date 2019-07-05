@@ -1,7 +1,8 @@
 # LimeSDR-Mini FPGA gateware
 
 This version is a modified version of the LimeSDR-Mini gateware.
-This bitstream is optimised for DVBS use (DVBS2 8PSK coming soon).
+This bitstream is optimised for DVBS/DVBS2 use, with support for Upsample, QPSK, 8PSK and
+attenuation.
 
 Instead of sending IQ sample directly through the USB link you can send packed symbols.
 So instead of using 32bit of data for one symbol this version uses 2bit, the last stage 
