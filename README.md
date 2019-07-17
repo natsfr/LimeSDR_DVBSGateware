@@ -22,6 +22,8 @@ later. In case of bug you can drop a bug report here or contact either @F5OEOEva
 
 ## How-to use it
 
+/!\ This part is not needed anymore F5OEO's dvbsdr already load the bitstream /!\
+
 ### FPGA Side
 
 #### Full project
